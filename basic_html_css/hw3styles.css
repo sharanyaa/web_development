@@ -1,0 +1,104 @@
+<!--
+        textarea.textarea1 { vertical-align: middle;
+            text-align:left; align-content: space-around; padding-left: 37px;padding-top: 37px; font-family:"Arial",sans-serif}
+    h.hpad { padding-left: 79px}
+    -->
+body {
+background: #F5F5F5;
+}
+
+.pageDiv
+{ 
+    padding-left: 78px;
+    padding-top: 45px;
+    border: 0;
+}
+.headingDiv
+{
+    font-family: "arial", sans-serif;
+    font-size: 80%;
+    font-weight: 900;
+    padding-bottom: 27px;
+    padding-top: 0px;
+}
+    
+.paraBoxDiv
+{
+ background-color: #FFFFFF;
+    border: 1;
+    width: 383px;
+   
+}
+.line1Div
+{
+    padding-top: 39px;
+    padding-left: 36px;
+    font-weight:bolder;
+    font-family:sans-serif;
+    font-size: 105%;
+    border: 0;
+   
+    
+}
+.line2Div
+{
+    border:0;
+    padding-left: 36px;
+    padding-top: 0;
+    padding-bottom: 38px;
+    font-family: sans-serif;
+    font-size: 99%;
+    
+}
+.countryNumDiv
+{
+    padding-top: 34px;
+}
+.countryDiv
+{
+    color: #AAAAAA;
+    font-size: 95%;
+    padding-left: 13px;
+    width:304px; height:35px;
+    border-radius: 3px;
+   box-shadow: inset 0px 1px 1px #ECECEC;
+}
+.numDiv
+{
+    color: #666666;
+    font-size: 150%;
+    padding-left: 14px;
+    height:36px; width:228px;
+    border-radius: 3px;
+   box-shadow: inset 0px 1px 1px #ECECEC;
+}
+.buttonsDiv
+{
+    padding-top: 52px;
+}
+.remindBtn
+{
+    width: 153px;
+    height: 43px;
+    border-radius: 6px;
+    background-color: #4E4E4E;
+    color: #EEEEEE;
+    font-size: 90%;
+  
+}
+.saveLink
+{
+    padding-left: 15px;
+}
+.saveBtn
+{
+    width: 194px;
+    height: 43px;
+    border-radius: 3px;
+    background-color: #6E329D;
+    color: #FFFFFA;
+    font-size: 100%;
+    font-weight:bold;
+    font-family:sans-serif;    
+  
+}

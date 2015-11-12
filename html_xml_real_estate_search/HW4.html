@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+var xmlDoc;
+function loadXML(url) {
+if (window.XMLHttpRequest)
+{
+xmlhttp=new XMLHttpRequest();
+}
+else
+{
+xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+xmlhttp.open("GET",url,false);
+xmlhttp.send();
+xmlDoc=xmlhttp.responseXML;
+return xmlDoc;
+}
+</script>
+</head>
+
+<body>
+<title> Real Estate Listings</title>
+<center><h2> Enter URL for Real Estate Catalog XML File</h2>
+<center> <input id="url" type="text"></center>
+<br/><br/><center><input type="button" value="Submit Query" onClick="checkUrl()" class="buttonClass" />
+</center>
+<script>
+function checkUrl()
+{
+var url=document.getElementById('url');
+if(url.value.indexOf(".xml",url.value.length-4)==-1)
+{
+alert("Enter a valid URL for an XML file!");
+}
+else if(url.value=="")
+{
+alert('URL cannot be empty!');
+}
+else
+{
+parseXmlFunction(url);
+}
+}
+function parseXmlFunction(url)
+{
+var xmlDoc=loadXML(url.value);
+if(xmlDoc.documentElement.children.length==0)
+alert("No listings found!");
+else if(xmlDoc.documentElement.nodeName=="parseerror")
+alert("Error in XML File!");
+else if(xmlDoc==null)
+alert("File not found!");
+else
+{
+var listings=xmlDoc.documentElement.children;
+var hWin = window.open("scrollbars=yes");
+var v="<html> <head><title>Listing</title></head> <body>";
+hWin.document.write(v); 
+v="<h1>Real Estate Listings</h1>";
+hWin.document.write(v);
+v="<table border='2'>";
+hWin.document.write(v);
+for (i=0;i<listings.length;i++)
+{  
+var v="<tr><th colspan=7>";
+hWin.document.write(v);
+hWin.document.write(listings[i].nodeName);
+v="</th></tr>";
+hWin.document.write(v);
+var listingsChildren=listings[i].children;
+for(j=0;j<listingsChildren.length;j++)
+{
+if(listingsChildren[j].nodeName=="ListingDetails")
+{
+v="<tr><th>Details</th>";
+hWin.document.write(v);
+}
+else
+{
+v="<tr><th>";
+hWin.document.write(v);
+hWin.document.write(listingsChildren[j].nodeName);
+v="</th>";
+hWin.document.write(v);
+}
+var fields=listingsChildren[j].children;
+for(k=0;k<fields.length;k++){
+if(fields[k].nodeName=="Image")
+{
+v="<th colspan=3>";
+hWin.document.write(v);
+hWin.document.write(fields[k].nodeName);
+}
+else if(fields[k].nodeName=="StreetAddress")
+{
+v="<th>Street";
+hWin.document.write(v);
+}
+else if(fields[k].nodeName=="ListingUrl")
+{
+v="<th>Listing URL";
+hWin.document.write(v);
+}
+else
+{
+v="<th>";
+hWin.document.write(v);
+hWin.document.write(fields[k].nodeName);
+}
+}
+v="</th></tr><tr><td>&nbsp</td>";
+hWin.document.write(v);
+var fields1=listingsChildren[j].children;
+for(k=0;k<fields1.length;k++){
+if(fields1[k].innerHTML.length==0)
+{
+v="<td> &nbsp";
+hWin.document.write(v);
+}
+else if(fields1[k].nodeName == "ListingUrl")
+{
+v="<td><a href="
+hWin.document.write(v);
+v=fields1[k].innerHTML;
+hWin.document.write(v);
+v=">Link to listing</a> ";
+hWin.document.write(v);
+}
+else if(fields1[k].nodeName=="Image")
+{
+ v="<td colspan=3> <img src=";
+ hWin.document.write(v);
+ v=fields1[k].innerHTML;
+ hWin.document.write(v);
+v= " style=\'max-height:350px;max-width:450px;\' alt=\'Listing Image\' max-height=200px max-width=250px />";			
+hWin.document.write(v);
+}
+else
+{
+v="<td>";
+hWin.document.write(v);
+v=fields1[k].innerHTML;
+hWin.document.write(v);
+}
+}	
+}
+v="</td></tr>";
+ hWin.document.write(v);
+   }
+  v= "</table></bo";
+hWin.document.write(v);
+v="dy>";
+hWin.document.close();
+}
+}
+</script>
+<NOSCRIPT>
+</body>
+</html>

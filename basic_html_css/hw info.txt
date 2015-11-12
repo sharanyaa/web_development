@@ -1,0 +1,6 @@
+
+HW3 image is updated (http://cs-server.usc.edu:45678/hw/hw3/hw3_image.png "Press refresh [Ctrl+F5] to make you get the recent version"). The previous one shows the drop-down list with two-headed arrows. The new image shows a regular drop-down list with one-headed arrow.
+
+
+Please note that the "Remind me later" button has rounded corners. These two links (http://www.css3.info/preview/rounded-border/, http://webdesignerwall.com/tutorials/css3-gradient-buttons) may help you.
+

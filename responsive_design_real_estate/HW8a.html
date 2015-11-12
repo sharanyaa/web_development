@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.hide {display: none; }
+.error { color: red;   } 
+input.error, select.error { border: 1px solid red;  }  
+table {    background-color: white; padding-left: 5%; padding-right:5%; color: black; } 
+tr:nth-child(even) {
+    background-color: #FFFFFF;
+}
+tr:nth-child(odd) {
+    background-color: #FAFAFA;
+}
+button {background-color:orange;}
+s
+.carousel-indicators .active {
+  background-color: orange;
+}
+.carousel-caption {
+    background-color: gray;
+}
+.fbShare { height: 3%; width:7%; }
+
+div.transbox {
+    width: 100%;
+   color:white;
+    background-color: gray;
+    text-align: left;
+    opacity: 0.6;
+	left:0;
+	right:auto;
+	bottom:0;
+	top:auto;
+    filter: alpha(opacity=60); /* For IE8 and earlier */
+}
+</style>
+<title>Real Estate Search</title>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.2/css/bootstrapValidator.min.css">
+
+<script >
+window.onload = function(){
+document.getElementById('stateId').selectedIndex = -1;
+}
+</script>
+<script>
+   $(function () {
+      $('#myTab li:eq(2) a').tab('show');
+   });
+</script>
+<script>
+//alert("in script");
+//http://cs-server.usc.edu:25414/HW8a.html
+//http://www.zillow.com/webservice/GetDeepSearchResults.htm?zws-id=X1-ZWz1b2e4iu88wb_1r7kw&address=2636+Menlo+Avenue&citystatezip=los+angeles%2C+CA&rentzesimate=true
+//http://cs-server.usc.edu:25414/hw8php.php?streetInput=2636%20Menlo%20Avenue&cityInput=Los%20Angeles&stateInput=CA
+
+$(document).ready(function()
+{
+//alert("FF");
+ 
+$('#form1').validate ({
+errorElement: "div",
+rules: 
+{
+streetId:
+{
+required: true
+},
+cityId: 
+{
+required: true
+},
+stateId:
+{
+required: true
+}
+}
+
+});
+
+$('#form1').submit(function (event)
+{
+event.preventDefault();
+//alert("sub");
+//JQUERY REGEX VALIDATION
+var spattern = /^(\d|[a-zA-Z])([a-zA-Z]|\d|\s)+/g;
+var cpattern=  /^([a-zA-Z])([a-zA-Z]|\s)+/g;
+
+if (spattern.test($('#streetId').val()==false) || cpattern.test($('#cityId').val())==false) 
+{
+//alert("1 incorr format");
+//document.getElementById("span1").innerHTML = "Incorrect Format!";
+}
+//else
+//document.getElementById("span1").innerHTML=" ";
+$.ajax({
+ 
+url:'http://csci571awsapp-env.elasticbeanstalk.com',
+//url: 'http://cs-server.usc.edu:25414/hw8php.php',
+data: {
+streetInput: $('#streetId').val(),
+cityInput: $('#cityId').val(),
+stateInput: $('#stateId').val() },
+type: 'GET',
+success: function(output) 
+{
+//alert("success\n"+output);
+output=JSON.parse(output); 
+//alert("hi  " + output.homedetails);
+
+
+$.each(output,function(index,value){
+//	alert(index+":"+value);
+
+});
+function setNAValue(val)
+{
+if(val.length==1 || !val)
+	val = "NA";
+return val;
+}
+//alert("df  hbhbjhb "+result+ " ccc " + result.homeDetails); str1.localeCompare(str2)
+//if(output.error.localeCompare('0')!=0)
+if(output.error!="0 ")
+{
+//alert("errorCode1	"+output.error);
+text3="";
+//document.getElementById('basicInfoDiv').className="hide";
+//document.getElementById('histZestDiv').className="hide";
+text3+="<h3 style='color:red; padding-left: 5%;' >No exact match found - Verify that the given address is correct</h3>";
+
+document.getElementById("nomatch").innerHTML=text3;
+}
+else
+{
+	//alert("errorCode2	"+output.error);
+document.getElementById('resultsDiv').className=""; 
+var text="";
+text+="<table class='table'>";
+
+text+="<tr>";
+text+="<td colspan='3'>See more details for <a href="+setNAValue(output.homedetails)+">"+"<span style='color: #EEAD56;'> "+setNAValue(output.street)+" "+setNAValue(output.city)+ setNAValue(output.state)+"</span></a> on Zillow </td>";
+text+="<td><a id='fbImgLink' ><img src='http://www.lulzshare.com/images/share_facebook.png' alt='Fbshare' id='fbImg' height='25' width='120'> ";
+text+="</a></td>";
+text+="<tr><td colspan='4'> </td></tr>";
+text+="</tr>";
+text+="<tr>";
+text+="<td>Property Type: </td>";
+text+="<td>"+setNAValue(output.propertyType)+"</td>";
+text+="<td>Last Sold Price: </td>";
+text+="<td>$"+setNAValue(Number(output.lastSoldPrice).toLocaleString())+"</td>";
+text+="</tr>";
+text+="<tr>";
+text+="<td>Year Built: </td>";
+text+="<td>"+setNAValue(output.yearBuilt)+"</td>";
+text+="<td>Last Sold Date: </td>";
+text+="<td>"+setNAValue(output.lastSoldDate)+"</td>";
+text+="</tr>";
+text+="<tr>";
+text+="<td>Lot Size: </td>";
+text+="<td>"+setNAValue(Number(output.lotSizeSqFt).toLocaleString())+"</td>";
+text+="<td>Zestimate&reg Property Estimate as of "+output.zestimateDate+": </td>";
+text+="<td>$"+setNAValue(Number(output.zestimate).toLocaleString())+"</td>";
+text+="</tr>";
+text+="<tr>";
+text+="<td>Finished Area: </td>";
+text+="<td>"+setNAValue(Number(output.finishedSqFt).toLocaleString())+"</td>";
+text+="<td>30 Days Overall Change <img src="+"up_g.gif"+"> </td>";
+text+="<td>$"+setNAValue(Number(output.overallChangeThirtyDays).toLocaleString())+"</td>";
+text+="</tr>";
+text+="<tr>";
+text+="<td>Bathrooms: </td>";
+text+="<td>"+setNAValue(output.bathrooms)+"</td>";
+text+="<td>All Time Property Range: </td>";
+text+="<td>$"+setNAValue(Number(output.allTimePropLow).toLocaleString())+" - "+setNAValue(Number(output.allTimePropHigh).toLocaleString())+"</td>";
+text+="</tr><tr><td>Bedrooms: </td>";
+text+="<td>"+setNAValue(output.bedrooms)+"</td>";
+text+="<td>Rent Zestimate&reg." +"Valuation as of "+setNAValue(output.rentZestimateDate)+"</td>";
+text+="<td>$"+setNAValue(Number(output.rentZestimateAmount).toLocaleString())+"</td>";
+text+="</tr>";
+text+="<tr><td>Tax Assessment Year: </td>";
+text+="<td>"+setNAValue(output.taxAssessmentYear)+"</td>";
+text+="<td>30 Days Rent Change <img src='down_r.gif'></td>";
+text+="<td>$"+setNAValue(Math.abs(Number(output.rentChangeThirtyDays)).toLocaleString())+"</td>";
+text+="</tr><tr><td>Tax Assessment: </td>";
+text+="<td>$"+setNAValue(Number(output.taxAssessment).toLocaleString())+"</td>";
+text+="<td>All Time Rent Change: </td>";
+text+="<td>$"+setNAValue(Number(output.allTimeRentLow).toLocaleString())+" - $"+setNAValue(Number(output.allTimeRentHigh).toLocaleString())+"</td>";
+text+="</tr></table>";
+
+text+="<p style='color: #FFFFFF;' align='center' >&copy Zillow, Inc., 2006-2014. Use is subject to ";
+text+="<span > <a style='color: #EEAD56;' href='http://www.zillow.com/corp/Terms.htm'>Terms of Use</a></span>";
+text+="</p>";
+text+="<p align='center' ><a href='http://www.zillow.com/zestimate/'><span style='color:#EEAD56;'> What's a Zestimate?</span></a><p>";
+
+
+//alert(text);
+document.getElementById("basicInfoDiv").innerHTML=text;
+$('#fbImgLink').click(function(e){
+	e.preventDefault();
+	 FB.ui(
+ {
+  method: 'feed',
+  name: output.street+", "+output.city+ ", " + output.state + " - " + output.zipcode,
+  href: output.homeDetails,
+  picture: output.imgurl1,
+  caption: 'Property Information for Zillow.com',
+  description:'Last Sold Price: $'+ Number(output.lastSoldPrice).toLocaleString()+'30 Days Overall Change:' + Number(output.overallChangeThirtyDays).toLocaleString(),
+  message: ''
+}, function(response)
+{
+	if(response && response.post_id)
+		alert("Posted Successfully.");
+		else
+		alert("Post not published.");
+	});
+});
+
+text="";
+text+= "	<div id='carousel-example-generic' class='carousel slide' data-ride='carousel' data-interval='2000' > \
+	<!-- Indicators --> \
+		<ol class='carousel-indicators' id='ol' style='text-align:right;'>  \
+			<li 'data-target='#carousel-example-generic' data-slide-to='0' class='active' style='border-color:orange;' ></li>  \
+			<li data-target='#carousel-example-generic' data-slide-to='1' style='border-color:orange;'></li>  \
+			<li data-target='#carousel-example-generic' data-slide-to='2' style='border-color:orange;'></li> \
+		</ol>  \
+		<div class='carousel-inner' style='background-color:white;'>\
+        	<div align= 'center' class='item active'>\
+            	<img src="+output.imgurl1+" alt='1 year chart'> \
+				<div class='carousel-caption transbox' ><strong style='padding-left:2%' >Historical Zestimate for the past 1 year</strong><br/>"+
+               "<div style='padding-left:2%'>" + output.street+', '+ output.city + ", " + output.state + " - " + output.zipcode +"</div>\
+                </div>\
+             </div>\
+			<div align= 'center' class='item'>\
+            	<img src="+output.imgurl2+" alt='5 years chart'>\
+                <div class='carousel-caption transbox' > <strong style='padding-left:2%' >Historical Zestimate for the past 5 years</strong><br/>"+              "<div style='padding-left:2%'>" +  output.street+", "+ output.city + ", " + output.state + " - " + output.zipcode +"</div>\
+			</div>\
+             </div>\
+             <div align= 'center' class='item'>\
+            	<img src="+output.imgurl1+" alt='10 years chart'>\
+                <div class='carousel-caption transbox' > <strong style='padding-left:2%' >Historical Zestimate for the past 10 years</strong>\<br/>"+        "<div style='padding-left:2%'>" +      output.street+", "+ output.city + ", " + output.state + " - " + output.zipcode+"</div>\
+				</div>\
+             </div>\
+         </div> \
+		<a class='carousel-control left' href='#carousel-example-generic' data-slide='prev' role='button'>\
+			<span class='glyphicon glyphicon-chevron-left'></span></a> \
+		<a class='carousel-control right' href='#carousel-example-generic' data-slide='next' role='button'> \
+			<span class='glyphicon glyphicon-chevron-right'></span></a>\
+		</div> ";
+		document.getElementById("histZestDiv").innerHTML=text;
+$('.carousel').carousel();
+}
+},
+error: function()
+{
+alert("error!!!!");
+text="";
+text+="<h3 style='color:red; padding-left: 5%;' >No exact match found - Verify that the given address is correct</h3>";
+document.getElementById("basicInfoDiv").innerHTML=text;
+
+
+}
+
+});
+});
+});
+
+</script>
+</head>
+
+<body style="background-image:url(http://www.neovisual.cz/files/V0779-d9.jpg)">
+<div id="fb-root"></div>
+
+ <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '384285095030111',
+      xfbml      : true,
+      version    : 'v2.2'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+   
+	  
+    </script>
+ <!--   <div
+  class="fb-like"
+  data-share="true"
+  data-width="450"
+  data-show-faces="true">
+</div>-->
+<div style="color:#EEAD56;" style="padding-left: 20px; ">
+<h3 style="color:#EEAD56; padding-left: 3%;" >Search Your Property Here</h3> <br/>
+<form id="form1" role="form" class="form-inline" method="GET">
+
+<div class="form-group" style="padding-left: 3%;"  >
+<label class="control-label" for="streetId">Street Address*: </label>
+</div>
+<div class="form-group"  style="padding-left: 3%;" >
+<input type="text" placeholder="Address" id="streetId" name="streetId" class="form-control"> 
+</div>
+
+<div class="form-group"  style="padding-left: 3%;"  >
+<label class="control-label"  ">City*: </label>
+</div>
+<div class="form-group"  style="padding-left: 3%;" >
+<input type="text" placeholder="City" id="cityId" name="cityId" class="form-control">
+</div>
+
+<div class="form-group"   style="padding-left: 3%;" >
+<label  class="control-label" for="stateId">State*: </label>
+</div>
+<div class="form-group"  style="padding-left: 3%;" >
+<select id="stateId" name="stateId" class="form-control"  size="1"> 
+<option value="AK">AK</option>
+<option value="AL">AL</option>
+<option value="AR">AR</option>
+<option value="AZ">AZ</option>
+<option value="CA">CA</option>
+<option value="CO">CO</option>
+<option value="CT">CT</option>
+<option value="DC">DC</option>
+<option value="DE">DE</option>
+<option value="GA">GA</option>
+<option value="FL">FL</option>
+<option value="HI">HI</option>
+<option value="IA">IA</option>
+<option value="ID">ID</option>
+<option value="IL">IL</option>
+<option value="IN">IN</option>
+<option value="KS">KS</option>
+<option value="KY">KY</option>
+<option value="LA">LA</option>
+<option value="MA">MA</option>
+<option value="MD">MD</option>
+<option value="ME">ME</option>
+<option value="MI">MI</option>
+<option value="MN">MN</option>
+<option value="MO">MO</option>
+<option value="MS">MS</option>
+<option value="MT">MT</option>
+<option value="NC">NC</option>
+<option value="ND">ND</option>
+<option value="NE">NE</option>
+<option value="NH">NH</option>
+<option value="NJ">NJ</option>
+<option value="NM">NM</option>
+<option value="NV">NV</option>
+<option value="NY">NY</option>
+<option value="OH">OH</option>
+<option value="OK">OK</option>
+<option value="OR">OR</option>
+<option value="PA">PA</option>
+<option value="RI">RI</option>
+<option value="SC">SC</option>
+<option value="SD">SD</option>
+<option value="TN">TN</option>
+<option value="TX">TX</option>
+<option value="UT">UT</option>
+<option value="VA">VA</option>
+<option value="VT">VT</option>
+<option value="WA">WA</option>
+<option value="WI">WI</option>
+<option value="WV">WV</option>
+<option value="WY">WY</option>
+</select> 
+</div>
+
+<div class="form-group"  style="padding-left: 3%;" >
+<input type="submit" class="form-control" id="submitBtnId" name="submitBtnId" value="Submit"
+style="color: white; background-color:#EEAD56; padding-left: 20%;"> 
+</div>
+
+<img  style="padding-left: 3%;" 
+src="http://www.zillow.com/widgets/GetVersionedResource.htm?path=/static/logos/Zillowlogo_150x40_rounded.gif" 
+alt="Real Estate on Zillow" cwidth="150" height="40" alt="Zillow Real Estate Search" />
+
+<hr color="#FFFFFF"></hr><br/> <br/>
+
+<span id="span1" style="color:red; padding-left : 10%;" class="error" ></span>
+
+
+</form>
+</div>
+<p id="nomatch" class="error"></p>
+<div id="resultsDiv" style="padding-left:2%;padding-right: 2%; " class="hide">
+<ul id="myTab" class="nav nav-tabs" style="border-bottom: 1px solid orange;">
+   <li class="active" style="background-color: orange;">
+      <a href="#basicInfoDiv" style="color: black;" data-toggle="tab">
+         Basic Info
+      </a>
+   </li>
+   <li  style="background-color: orange;"><a href="#histZestDiv" style="color: black;" data-toggle="tab">Historical Zestimates</a></li>
+</ul>
+
+
+<div id="myTabContent" style="color:#EEAD56;" class="tab-content"  >
+   <div class="tab-pane fade in active" id="basicInfoDiv">  </div>
+   <div class="tab-pane fade" id="histZestDiv"> </div>
+</div>
+
+</div>
+
+<NOSCRIPT/> 
+</body>
+</html>
